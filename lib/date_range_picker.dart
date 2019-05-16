@@ -1149,7 +1149,7 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
         child: _buildPicker(),
       ),
     );
-    Widget actions = new ButtonTheme.bar(
+    final Widget actions = new ButtonTheme.bar(
       child: new ButtonBar(
         children: <Widget>[
           new FlatButton(
@@ -1158,11 +1158,36 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
           ),
           new FlatButton(
             child: new Text(localizations.okButtonLabel),
-            onPressed: _selectedFirstDate != null && _selectedLastDate != null ? _handleOk : null,
+            onPressed: _selectedFirstDate != null && _selectedLastDate != null
+                ? _handleOk
+                : null,
           ),
         ],
       ),
     );
+
+    Widget alertContainer = Container();
+
+    if (_selectedFirstDate == null || _selectedLastDate == null) {
+      alertContainer = Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.orange,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.orange[100],
+        ),
+        child: Text(
+          'Select two days!',
+          style: TextStyle(
+            color: Colors.orange[800],
+            fontSize: 12.0,
+          ),
+        ),
+      );
+    }
 
     final Dialog dialog = new Dialog(child: new OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
@@ -1190,6 +1215,7 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       picker,
+                      alertContainer,
                       actions,
                     ],
                   ),
