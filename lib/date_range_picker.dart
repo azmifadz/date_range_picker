@@ -996,6 +996,7 @@ class _DatePickerDialog extends StatefulWidget {
     this.selectableDayPredicate,
     this.initialDatePickerMode,
     this.onError,
+    this.alertWidget,
   }) : super(key: key);
 
   final DateTime initialFirstDate;
@@ -1005,6 +1006,7 @@ class _DatePickerDialog extends StatefulWidget {
   final SelectableDayPredicate selectableDayPredicate;
   final DatePickerMode initialDatePickerMode;
   final OnError onError;
+  final Widget alertWidget;
 
   @override
   _DatePickerDialogState createState() => new _DatePickerDialogState();
@@ -1162,9 +1164,11 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
             child: new Text(localizations.okButtonLabel),
             onPressed: _selectedFirstDate != null && _selectedLastDate != null
                 ? _handleOk
-                : widget.onError == null ? null : () {
-                  widget.onError(_selectedFirstDate, _selectedLastDate);
-                },
+                : widget.onError == null
+                    ? null
+                    : () {
+                        widget.onError(_selectedFirstDate, _selectedLastDate);
+                      },
           ),
         ],
       ),
@@ -1196,6 +1200,7 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       picker,
+                      _selectedFirstDate != null && _selectedLastDate != null ? Container() : widget.alertWidget ?? Container(),
                       actions,
                     ],
                   ),
@@ -1218,7 +1223,11 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
                     child: new Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[picker, actions],
+                      children: <Widget>[
+                        picker,
+                        _selectedFirstDate != null && _selectedLastDate != null ? Container() : widget.alertWidget ?? Container(),
+                        actions,
+                      ],
                     ),
                   ),
                 ),
@@ -1283,6 +1292,7 @@ Future<List<DateTime>> showDatePicker({
   DatePickerMode initialDatePickerMode = DatePickerMode.day,
   Locale locale,
   TextDirection textDirection,
+  Widget alertWidget,
   OnError onError,
 }) async {
   assert(!initialFirstDate.isBefore(firstDate),
@@ -1309,6 +1319,7 @@ Future<List<DateTime>> showDatePicker({
     selectableDayPredicate: selectableDayPredicate,
     initialDatePickerMode: initialDatePickerMode,
     onError: onError,
+    alertWidget: alertWidget,
   );
 
   if (textDirection != null) {
