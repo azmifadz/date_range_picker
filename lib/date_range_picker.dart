@@ -995,6 +995,7 @@ class _DatePickerDialog extends StatefulWidget {
     this.lastDate,
     this.selectableDayPredicate,
     this.initialDatePickerMode,
+    this.onError,
   }) : super(key: key);
 
   final DateTime initialFirstDate;
@@ -1003,6 +1004,7 @@ class _DatePickerDialog extends StatefulWidget {
   final DateTime lastDate;
   final SelectableDayPredicate selectableDayPredicate;
   final DatePickerMode initialDatePickerMode;
+  final OnError onError;
 
   @override
   _DatePickerDialogState createState() => new _DatePickerDialogState();
@@ -1110,6 +1112,10 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
       if (_selectedLastDate != null) {
         result.add(_selectedLastDate);
       }
+    }
+    if (widget.onError != null && (_selectedFirstDate == null || _selectedLastDate == null)) {
+      widget.onError(_selectedFirstDate, _selectedLastDate);
+      return;
     }
     Navigator.pop(context, result);
   }
@@ -1236,6 +1242,8 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
 /// See [showDatePicker].
 typedef bool SelectableDayPredicate(DateTime day);
 
+typedef OnError = void Function(DateTime first, DateTime second);
+
 /// Shows a dialog containing a material design date picker.
 ///
 /// The returned [Future] resolves to the date selected by the user when the
@@ -1274,6 +1282,7 @@ Future<List<DateTime>> showDatePicker({
   DatePickerMode initialDatePickerMode = DatePickerMode.day,
   Locale locale,
   TextDirection textDirection,
+  OnError onError,
 }) async {
   assert(!initialFirstDate.isBefore(firstDate),
       'initialDate must be on or after firstDate');
@@ -1298,6 +1307,7 @@ Future<List<DateTime>> showDatePicker({
     lastDate: lastDate,
     selectableDayPredicate: selectableDayPredicate,
     initialDatePickerMode: initialDatePickerMode,
+    onError: onError
   );
 
   if (textDirection != null) {
