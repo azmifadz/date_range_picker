@@ -804,7 +804,7 @@ class _MonthPickerState extends State<MonthPicker>
                       ? widget.selectedFirstDate
                       : widget.selectedLastDate),
                   controller: _dayPickerController,
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical,
                   itemCount: _monthDelta(widget.firstDate, widget.lastDate) + 1,
                   itemBuilder: _buildItems,
                   onPageChanged: _handleMonthPageChanged,
