@@ -1149,35 +1149,20 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
         child: _buildPicker(),
       ),
     );
-    Widget actions;
-
-    if (_selectedFirstDate != null && _selectedLastDate != null) {
-      actions = new ButtonTheme.bar(
-        child: new ButtonBar(
-          children: <Widget>[
-            new FlatButton(
-              child: new Text(localizations.cancelButtonLabel),
-              onPressed: _handleCancel,
-            ),
-            new FlatButton(
-              child: new Text(localizations.okButtonLabel),
-              onPressed: _handleOk,
-            ),
-          ],
-        ),
-      );
-    } else {
-      actions = new ButtonTheme.bar(
-        child: new ButtonBar(
-          children: <Widget>[
-            new FlatButton(
-              child: new Text(localizations.cancelButtonLabel),
-              onPressed: _handleCancel,
-            ),
-          ],
-        ),
-      );
-    }
+    Widget actions = new ButtonTheme.bar(
+      child: new ButtonBar(
+        children: <Widget>[
+          new FlatButton(
+            child: new Text(localizations.cancelButtonLabel),
+            onPressed: _handleCancel,
+          ),
+          new FlatButton(
+            child: new Text(localizations.okButtonLabel),
+            onPressed: _selectedFirstDate != null && _selectedLastDate != null ? _handleOk : null,
+          ),
+        ],
+      ),
+    );
 
     final Dialog dialog = new Dialog(child: new OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
