@@ -804,7 +804,7 @@ class _MonthPickerState extends State<MonthPicker>
                       ? widget.selectedFirstDate
                       : widget.selectedLastDate),
                   controller: _dayPickerController,
-                  scrollDirection: Axis.vertical,
+                  scrollDirection: Axis.horizontal,
                   itemCount: _monthDelta(widget.firstDate, widget.lastDate) + 1,
                   itemBuilder: _buildItems,
                   onPageChanged: _handleMonthPageChanged,
@@ -995,6 +995,7 @@ class _DatePickerDialog extends StatefulWidget {
     this.lastDate,
     this.selectableDayPredicate,
     this.initialDatePickerMode,
+    this.onError,
   }) : super(key: key);
 
   final DateTime initialFirstDate;
@@ -1003,6 +1004,7 @@ class _DatePickerDialog extends StatefulWidget {
   final DateTime lastDate;
   final SelectableDayPredicate selectableDayPredicate;
   final DatePickerMode initialDatePickerMode;
+  final OnError onError;
 
   @override
   _DatePickerDialogState createState() => new _DatePickerDialogState();
@@ -1160,34 +1162,13 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
             child: new Text(localizations.okButtonLabel),
             onPressed: _selectedFirstDate != null && _selectedLastDate != null
                 ? _handleOk
-                : null,
+                : widget.onError == null ? null : () {
+                  widget.onError(_selectedFirstDate, _selectedLastDate);
+                },
           ),
         ],
       ),
     );
-
-    Widget alertContainer = Container();
-
-    if (_selectedFirstDate == null || _selectedLastDate == null) {
-      alertContainer = Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.orange,
-            width: 1.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-          color: Colors.orange[100],
-        ),
-        child: Text(
-          'Select two days!',
-          style: TextStyle(
-            color: Colors.orange[800],
-            fontSize: 12.0,
-          ),
-        ),
-      );
-    }
 
     final Dialog dialog = new Dialog(child: new OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
@@ -1215,7 +1196,6 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       picker,
-                      alertContainer,
                       actions,
                     ],
                   ),
@@ -1263,6 +1243,8 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
 /// See [showDatePicker].
 typedef bool SelectableDayPredicate(DateTime day);
 
+typedef OnError(DateTime first, DateTime second);
+
 /// Shows a dialog containing a material design date picker.
 ///
 /// The returned [Future] resolves to the date selected by the user when the
@@ -1301,6 +1283,7 @@ Future<List<DateTime>> showDatePicker({
   DatePickerMode initialDatePickerMode = DatePickerMode.day,
   Locale locale,
   TextDirection textDirection,
+  OnError onError,
 }) async {
   assert(!initialFirstDate.isBefore(firstDate),
       'initialDate must be on or after firstDate');
@@ -1325,6 +1308,7 @@ Future<List<DateTime>> showDatePicker({
     lastDate: lastDate,
     selectableDayPredicate: selectableDayPredicate,
     initialDatePickerMode: initialDatePickerMode,
+    onError: onError,
   );
 
   if (textDirection != null) {
