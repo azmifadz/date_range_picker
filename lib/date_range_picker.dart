@@ -1201,6 +1201,16 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
                     children: <Widget>[
                       picker,
                       _selectedFirstDate != null && _selectedLastDate != null ? Container() : widget.alertWidget ?? Container(),
+                      _selectedLastDate == null
+                          ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            'Double click to select single date',
+                            style: TextStyle(color: Color(0xFF00B4AD)),
+                          ),
+                        ),)
+                          : Container(),
                       actions,
                     ],
                   ),
